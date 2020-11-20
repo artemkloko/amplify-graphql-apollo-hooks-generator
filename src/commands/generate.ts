@@ -4,6 +4,7 @@ import loadConfig from "amplify-codegen/src/codegen-config";
 
 import { generate } from "../generator";
 import { FILE_EXTENSION_MAP } from "../constants";
+import { Language } from "../types";
 
 export const run = async (context: Context) => {
   /**
@@ -19,15 +20,23 @@ export const run = async (context: Context) => {
       : path.dirname(path.dirname(includeFiles));
     const schemaPath = path.join(projectPath, cfg.schema);
 
-    /**
-     * The following is loosely copied from
-     * amplify-cli/packages/amplify-codegen/src/commands/types.js
-     */
-    const fileExtension =
-      FILE_EXTENSION_MAP[cfg.amplifyExtension.codeGenTarget];
-    const typesOutputPath = path
-      .join(projectPath, cfg.amplifyExtension.generatedFileName)
-      .replace(new RegExp("\\." + fileExtension + "$"), "");
+    let typesOutputPath: string | undefined;
+    if (cfg.amplifyExtension.codeGenTarget === Language.TYPESCRIPT) {
+      if (!cfg.amplifyExtension.generatedFileName) {
+        throw new Error(
+          "You must have `generatedFileName` specified in `.graphqlconfig.yml` since `codeGenTarget === typescript`"
+        );
+      }
+      const fileExtension =
+        FILE_EXTENSION_MAP[cfg.amplifyExtension.codeGenTarget];
+      /**
+       * The following is loosely copied from
+       * amplify-cli/packages/amplify-codegen/src/commands/types.js
+       */
+      typesOutputPath = path
+        .join(projectPath, cfg.amplifyExtension.generatedFileName)
+        .replace(new RegExp("\\." + fileExtension + "$"), "");
+    }
 
     let apolloHooksPath = cfg.amplifyExtension.apolloHooksPath;
     if (!apolloHooksPath) {

@@ -56,13 +56,18 @@ export function run(argv: Array<String>): void {
           coerce: path.resolve,
         },
         typesImportPath: {
-          demand: true,
+          demand: false,
           describe: "Path to generated types file",
           normalize: true,
           coerce: path.resolve,
         },
       },
       async (argv) => {
+        if (argv.language === Language.TYPESCRIPT && !argv.typesImportPath) {
+          throw new Error(
+            "You must provide `typesImportPath` since `language === typescript`"
+          );
+        }
         generate(argv.schema, argv.output, {
           language: argv.language,
           statementsImportPath: argv.statementsImportPath,

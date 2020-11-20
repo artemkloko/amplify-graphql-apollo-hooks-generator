@@ -28,8 +28,8 @@ export const generate = async (
   outputPath: string,
   options: {
     language: string;
-    typesImportPath: string;
     statementsImportPath: string;
+    typesImportPath?: string;
   }
 ) => {
   const { language } = options;
@@ -72,12 +72,12 @@ export const generate = async (
     for (const gqlOperation of Object.values(GQLOperationTypeEnum)) {
       const operationsPerType = generateOperations(gqlOperations, gqlOperation);
       generateFile(
+        language,
         operationsPerType,
         outputPath,
-        options.typesImportPath,
+        operationsFilenames[gqlOperation] + "." + FILE_EXTENSION_MAP[language],
         options.statementsImportPath,
-        language,
-        operationsFilenames[gqlOperation] + "." + FILE_EXTENSION_MAP[language]
+        options.typesImportPath
       );
     }
   } else {
@@ -96,12 +96,12 @@ export const generate = async (
       );
     }
     generateFile(
+      language,
       operationsPerType,
       path.dirname(outputPath),
-      options.typesImportPath,
+      path.basename(outputPath),
       options.statementsImportPath,
-      language,
-      path.basename(outputPath)
+      options.typesImportPath
     );
   }
 };
@@ -110,20 +110,20 @@ export const generate = async (
  * Creates a file for the provides operations
  */
 const generateFile = (
+  language: Language,
   operationsPerType: OperationsForType[],
   outputPath: string,
-  typesImportPath: string,
+  filename: string,
   statementsImportPath: string,
-  language: Language,
-  filename: string
+  typesImportPath?: string
 ) => {
   const input: RenderOperationsInput = {
     operationsPerType,
     imports: collectImports(
       language,
       operationsPerType,
-      path.relative(outputPath, typesImportPath),
-      path.relative(outputPath, statementsImportPath)
+      path.relative(outputPath, statementsImportPath),
+      typesImportPath && path.relative(outputPath, typesImportPath)
     ),
   };
   /**
@@ -208,8 +208,8 @@ function render(doc: RenderOperationsInput, language: Language) {
 const collectImports = (
   language: Language,
   operationsPerType: OperationsForType[],
-  typesRelativePath: string,
-  statementsRelativePath: string
+  statementsRelativePath: string,
+  typesRelativePath?: string
 ) => {
   /**
    * Create an accumulator
@@ -245,6 +245,11 @@ const collectImports = (
       }
 
       if (language === Language.TYPESCRIPT) {
+        if (!typesRelativePath) {
+          throw new Error(
+            "`typesRelativePath` must be provided when collecting typescript imports"
+          );
+        }
         /**
          * Add operation return type import
          * and operation variables type import if such exist
