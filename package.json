@@ -1,6 +1,6 @@
 {
   "name": "amplify-graphql-apollo-hooks-generator",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "amplify react apollo hooks generator plugin",
   "repository": {
     "type": "git",
