@@ -1,0 +1,25 @@
+/* tslint:disable */
+/* eslint-disable */
+// this is an auto generated file. This will be overwritten
+
+import gql from "graphql-tag";
+{{#each imports as |variables from| }}
+import {
+  {{#each variables as |variable| }}
+    {{variable}},
+  {{/each}}
+} from "{{from}}";
+
+{{/each}}
+
+{{#each operationsPerType as |operationType| }}
+  {{#each operations as |operation| }}
+export const {{ operation.hookName }} = (options) =>
+  use{{operationType.apolloOperation}}(
+    gql({{camelCase operation.operationName}}),
+    options
+  );
+
+  {{/each}}
+{{/each}}
+

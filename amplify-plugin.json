@@ -1,0 +1,12 @@
+{
+  "name": "apollo-hooks",
+  "type": "util",
+  "commands": [
+    "version",
+    "help",
+    "generate"
+  ],
+  "eventHandlers": [
+    "PostPush"
+  ]
+}
