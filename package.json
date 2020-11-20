@@ -17,7 +17,7 @@
     "hooks"
   ],
   "engines": {
-    "node": ">=10.0.0"
+    "node": ">=10.17.0"
   },
   "bin": {
     "amplify-graphql-apollo-hooks-generator": "./bin/cli"
