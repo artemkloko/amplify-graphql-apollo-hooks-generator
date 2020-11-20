@@ -24,7 +24,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "setup-dev": "yarn global add amplify-graphql-apollo-hooks-generator@link:${PWD}"
   },
   "author": "artemkloko",
   "license": "ISC",
